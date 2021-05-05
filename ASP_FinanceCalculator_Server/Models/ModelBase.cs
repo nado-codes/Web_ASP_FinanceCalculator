@@ -5,8 +5,10 @@ using System.Web;
 
 namespace ASP_FinanceCalculator_Server.Models
 {
-    public class Test : ModelBase
+    public class ModelBase
     {
-        
+        public int Id { get; set; }
+
+        public DateTime DateAdded { get; set; }
     }
 }

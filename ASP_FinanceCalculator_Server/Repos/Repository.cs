@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using ASP_FinanceCalculator_Server.Models;
 
 namespace ASP_FinanceCalculator_Server.Repos
 {
@@ -17,7 +18,7 @@ namespace ASP_FinanceCalculator_Server.Repos
             Value = value;
         }
     }
-    public class Repository<Entity>
+    public class Repository<TEntity> where TEntity : ModelBase
     {
         private string _connectionString;
 

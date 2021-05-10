@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using ASP_FinanceCalculator_Server.Models;
+using Pluralize;
+using Pluralize.NET;
 
 namespace ASP_FinanceCalculator_Server.Repos
 {
@@ -18,19 +22,17 @@ namespace ASP_FinanceCalculator_Server.Repos
             Value = value;
         }
     }
-    public class Repository<TEntity> where TEntity : ModelBase
+    public class Repository<TModel> where TModel : ModelBase
     {
         private string _connectionString;
 
         private SqlConnection _connection;
-        //SqlCommand cmd = new SqlCommand("PROC",_connection)
-        //Connection.open
 
-        //cmd.CommandType = System.Data.CommandType.StoredProcedure
+        private Pluralizer _pluralizer;
 
-        //cmd.Parameters.Add(new SqlParameter("PARAM_NAME",VALUE))
+        private string ModelName => typeof(TModel).Name;
 
-        //SqlDataReader reader = cmd.ExecuteReader;
+        private string ModelNamePlural => _pluralizer.Pluralize(ModelName);
 
         //var models = new List<Code>();
 
@@ -53,8 +55,98 @@ namespace ASP_FinanceCalculator_Server.Repos
 
         private SqlCommand OpenConnection(string procName, List<NadoMapperParameter> parameters = null)
         {
-            SqlCommand cmd = new SqlCommand(procName);
+            SqlCommand cmd = new SqlCommand(procName) {CommandType = CommandType.StoredProcedure};
 
+            foreach (NadoMapperParameter parameter in parameters)
+                cmd.Parameters.Add(new SqlParameter(parameter.Name, parameter.Value));
+
+            _connection.Open();
+
+            return cmd;
+        }
+
+        public bool VerifyInitialize()
+        {
+            _connection = new SqlConnection();
+            _pluralizer = new Pluralizer();
+
+            return true;
+        }
+
+        public Task<IEnumerable<TModel>> GetAllAsync()
+        {
+            var cmd = OpenConnection("GetAll" + ModelNamePlural);
+            var data = cmd.ExecuteReader();
+
+            _connection.Close();
+
+            //TODO: Create mapping function for SINGLE and ALL to map reader data to TModel
+
+            return null;
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(NadoMapperParameter parameter)
+        {
+            return null;
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(string procName, NadoMapperParameter parameter)
+        {
+            return null;
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            return null;
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            return null;
+        }
+
+        public Task<TModel> GetSingleAsync(IEnumerable<NadoMapperParameter> parameters)
+        {
+            return null;
+        }
+
+        public Task<TModel> GetSingleAsync(long id)
+        {
+            return null;
+        }
+
+        public Task<TModel> GetSingleAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            return null;
+        }
+
+        public Task<TModel> GetSingleAsync(NadoMapperParameter parameter)
+        {
+            return null;
+        }
+
+        public Task<TModel> GetSingleAsync(string procName, NadoMapperParameter parameter)
+        {
+            return null;
+        }
+
+        public Task<TModel> AddAsync(TModel item, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            return null;
+        }
+
+        public Task<TModel> AddUpdateAsync(TModel item)
+        {
+            return null;
+        }
+
+        public Task<long> UpdateAsync(TModel item)
+        {
+            return null;
+        }
+
+        public Task<long> DeleteAsync(TModel item)
+        {
             return null;
         }
 

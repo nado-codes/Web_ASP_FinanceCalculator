@@ -10,5 +10,6 @@ namespace ASP_FinanceCalculator_Server.Models
         public int Id { get; set; }
 
         public DateTime DateAdded { get; set; }
+        public byte[] LastModified { get; set; }
     }
 }

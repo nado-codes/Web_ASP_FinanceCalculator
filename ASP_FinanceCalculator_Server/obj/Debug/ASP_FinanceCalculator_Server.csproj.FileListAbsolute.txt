@@ -114,3 +114,4 @@ D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csproj.CopyComplete
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.pdb
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Pluralize.NET.dll

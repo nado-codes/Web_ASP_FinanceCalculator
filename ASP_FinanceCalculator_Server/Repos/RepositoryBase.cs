@@ -7,8 +7,8 @@ using ASP_FinanceCalculator_Server.Models;
 
 namespace ASP_FinanceCalculator_Server.Repos
 {
-    public class RepositoryBase<TModel> : Repository<TModel> where TModel: ModelBase, new() 
+    /* public class RepositoryBase<TModel> : Repository<TModel> where TModel: ModelBase, new() 
     {
         
-    }
+    } */
 }

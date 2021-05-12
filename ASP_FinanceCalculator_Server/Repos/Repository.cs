@@ -25,18 +25,13 @@ namespace ASP_FinanceCalculator_Server.Repos
     }
     public class Repository<TModel> where TModel : ModelBase
     {
-        
-        private DataContext<TModel> _dataContext { get; }
 
-
-        public void LoadConnectionString(string connectionString) => _connectionString = connectionString;
-
-
+        private DataContext<TModel> _dataContext = new DataContext<TModel>();
 
         public bool VerifyInitialize()
         {
             _dataContext.VerifyInitialize();
-            // _dataContext.
+            _dataContext.LoadConnectionString("localhost");
 
             return true;
         }
@@ -45,9 +40,7 @@ namespace ASP_FinanceCalculator_Server.Repos
         {
             VerifyInitialize();
 
-            
-
-            return null;
+            return _dataContext.ExecuteReaderAsync();
         }
 
         public Task<IEnumerable<TModel>> GetAsync(NadoMapperParameter parameter)

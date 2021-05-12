@@ -8,20 +8,14 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using ASP_FinanceCalculator_Server.Models;
+using ASP_FinanceCalculator_Server.Repos;
 
 namespace ASP_FinanceCalculator_Server.Controllers
 {
-    [RoutePrefix("api/test")]
-    public class TestController : ApiController
+    [RoutePrefix("api/tests")]
+    public class TestController : NadoAPIControllerBase<Test,TestsRepository>
     {
-        [HttpGet]
-        [Route("")]
-        public async Task<bool> Test()
-        {
-            // DbContext context = new DbContext("localhost");
-
-            // return await context.
-            return false;
-        }
+        
     }
 }

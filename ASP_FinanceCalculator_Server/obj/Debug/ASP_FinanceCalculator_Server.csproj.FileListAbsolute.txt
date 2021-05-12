@@ -1,4 +1,3 @@
-D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csprojAssemblyReference.cache
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csproj.CoreCompileInputs.cache
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\ASP_FinanceCalculator_Server.dll.config
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\ASP_FinanceCalculator_Server.dll
@@ -115,3 +114,4 @@ D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.pdb
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Pluralize.NET.dll
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csprojAssemblyReference.cache

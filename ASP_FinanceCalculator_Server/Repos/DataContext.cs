@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using Newtonsoft.Json;
 using Pluralize.NET;
 
 namespace ASP_FinanceCalculator_Server.Repos
 {
-    public abstract class DataContext<TModel>
+    public class DataContext<TModel>
     {
         private SqlConnection _connection;
         private string _connectionString;
@@ -17,12 +19,17 @@ namespace ASP_FinanceCalculator_Server.Repos
         private string _modelName => typeof(TModel).Name;
         private string _modelNamePlural => _pluralizer.Pluralize(_modelName);
 
+        public void LoadConnectionString(string connectionString) => _connectionString = connectionString;
+
         private SqlCommand OpenConnection(string procName, List<NadoMapperParameter> parameters = null)
         {
             SqlCommand cmd = new SqlCommand(procName) { CommandType = CommandType.StoredProcedure };
 
-            foreach (NadoMapperParameter parameter in parameters)
-                cmd.Parameters.Add(new SqlParameter(parameter.Name, parameter.Value));
+            if (parameters != null)
+            {
+                foreach (NadoMapperParameter parameter in parameters)
+                    cmd.Parameters.Add(new SqlParameter(parameter.Name, parameter.Value));
+            }
 
             _connection.Open();
 
@@ -56,16 +63,29 @@ namespace ASP_FinanceCalculator_Server.Repos
 
         // return mappedObject
 
-        public IEnumerable<TModel> ExecuteReaderAsync()
+        private TModel MapSingle(Dictionary<string, object> props) =>
+            JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject(props));
+
+        public async Task<IEnumerable<TModel>> ExecuteReaderAsync()
         {
             var cmd = OpenConnection("GetAll" + _modelNamePlural);
-            var data = cmd.ExecuteReader();
+            var data = await cmd.ExecuteReaderAsync();
+
+            var models = new List<TModel>();
+
+            while (data.Read())
+            {
+                var objectProps = new Dictionary<string,object>();
+
+                for(int i = 0; i < data.VisibleFieldCount; ++i)
+                    objectProps.Add(data.GetName(i),data.GetValue(i));
+
+                models.Add(MapSingle(objectProps));
+            }
 
             _connection.Close();
 
-            //TODO: Create mapping function for SINGLE and ALL to map reader data to TModel
-
-            return null;
+            return models;
         }
     }
 }

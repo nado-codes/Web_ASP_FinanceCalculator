@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -30,8 +31,9 @@ namespace ASP_FinanceCalculator_Server.Repos
 
         public bool VerifyInitialize()
         {
+            _dataContext.LoadConnectionString("Data Source=localhost;Initial Catalog=LocalDB;Integrated Security=True;");
             _dataContext.VerifyInitialize();
-            _dataContext.LoadConnectionString("localhost");
+            
 
             return true;
         }

@@ -1,0 +1,7 @@
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Tools\bin\Debug\ASP_FinanceCalculator_Tools.exe.config
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Tools\bin\Debug\ASP_FinanceCalculator_Tools.exe
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Tools\bin\Debug\ASP_FinanceCalculator_Tools.pdb
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Tools\obj\Debug\ASP_FinanceCalculator_Tools.csprojAssemblyReference.cache
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Tools\obj\Debug\ASP_FinanceCalculator_Tools.csproj.CoreCompileInputs.cache
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Tools\obj\Debug\ASP_FinanceCalculator_Tools.exe
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Tools\obj\Debug\ASP_FinanceCalculator_Tools.pdb

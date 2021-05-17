@@ -31,7 +31,7 @@ namespace ASP_FinanceCalculator_Server.Repos
 
         public bool VerifyInitialize()
         {
-            _dataContext.LoadConnectionString("Data Source=localhost;Initial Catalog=LocalDB;Integrated Security=True;");
+            _dataContext.LoadConnectionString("Data Source=localhost;Initial Catalog=TestDB;Integrated Security=True;");
             _dataContext.VerifyInitialize();
             
 

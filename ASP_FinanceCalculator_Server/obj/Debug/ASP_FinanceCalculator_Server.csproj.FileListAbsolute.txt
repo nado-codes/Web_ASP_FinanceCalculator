@@ -1,4 +1,3 @@
-D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csproj.CoreCompileInputs.cache
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\ASP_FinanceCalculator_Server.dll.config
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\ASP_FinanceCalculator_Server.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\ASP_FinanceCalculator_Server.pdb
@@ -70,6 +69,7 @@ D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Microsoft.Web.Infrastructure.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Newtonsoft.Json.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Owin.dll
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Pluralize.NET.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\System.Net.Http.Formatting.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\System.Web.Helpers.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\System.Web.Http.dll
@@ -110,8 +110,8 @@ D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Microsoft.Owin.Security.OAuth.xml
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\System.Web.Http.Owin.xml
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csprojAssemblyReference.cache
+D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csproj.CoreCompileInputs.cache
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csproj.CopyComplete
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.dll
 D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.pdb
-D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\bin\Pluralize.NET.dll
-D:\Storage\Projects\Web\ASP\_FinanceCalculator\ASP_FinanceCalculator_Server\obj\Debug\ASP_FinanceCalculator_Server.csprojAssemblyReference.cache

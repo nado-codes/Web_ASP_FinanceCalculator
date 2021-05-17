@@ -23,7 +23,7 @@ namespace ASP_FinanceCalculator_Server.Repos
 
         private SqlCommand OpenConnection(string procName, List<NadoMapperParameter> parameters = null)
         {
-            SqlCommand cmd = new SqlCommand(procName) { CommandType = CommandType.StoredProcedure };
+            SqlCommand cmd = new SqlCommand(procName,_connection) { CommandType = CommandType.StoredProcedure };
 
             if (parameters != null)
             {
@@ -31,7 +31,7 @@ namespace ASP_FinanceCalculator_Server.Repos
                     cmd.Parameters.Add(new SqlParameter(parameter.Name, parameter.Value));
             }
 
-            _connection.Open();
+            cmd.Connection.Open();
 
             return cmd;
         }
@@ -87,5 +87,10 @@ namespace ASP_FinanceCalculator_Server.Repos
 
             return models;
         }
+
+        /* public async Task<TModel> ExecuteScalarAsync(string cmd, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+
+        } */
     }
 }

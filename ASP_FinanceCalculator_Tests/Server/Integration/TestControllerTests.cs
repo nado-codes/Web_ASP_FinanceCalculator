@@ -8,13 +8,22 @@ namespace ASP_FinanceCalculator_Tests
     public class TestControllerTests
     {
         [Fact]
-        public async void Integration()
+        public async void IntegrationTest()
         {
             var testController = new TestController();
 
+            //Add
+
+            //Update
+
+            //GetAll
             var tests = await testController.GetAllAsync();
 
             Assert.True(tests.Count() > 0);
+
+            //GetById
+
+            //Delete            
         }
     }
 }

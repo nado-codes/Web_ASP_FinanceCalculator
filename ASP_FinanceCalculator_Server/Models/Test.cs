@@ -7,6 +7,6 @@ namespace ASP_FinanceCalculator_Server.Models
 {
     public class Test : ModelBase
     {
-        
+        public string Name { get; set; }
     }
 }

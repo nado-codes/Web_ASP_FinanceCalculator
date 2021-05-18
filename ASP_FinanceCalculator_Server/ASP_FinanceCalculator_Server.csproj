@@ -225,7 +225,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Repos\DataContext.cs" />
-    <Compile Include="Repos\Repository.cs" />
     <Compile Include="Repos\RepositoryBase.cs" />
     <Compile Include="Repos\TestsRepository.cs" />
     <Compile Include="Results\ChallengeResult.cs" />

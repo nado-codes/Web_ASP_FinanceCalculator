@@ -11,7 +11,7 @@ using ASP_FinanceCalculator_Server.Repos;
 
 namespace ASP_FinanceCalculator_Server.Controllers
 {
-    public class NadoAPIControllerBase<TModel,TRepo> : ApiController where TModel : ModelBase, new() where TRepo: Repository<TModel>, new()
+    public class NadoAPIControllerBase<TModel,TRepo> : ApiController where TModel : ModelBase, new() where TRepo: RepositoryBase<TModel>, new()
     {
         protected TRepo _Repo = new TRepo();
 

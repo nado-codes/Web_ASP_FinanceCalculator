@@ -1,14 +1,132 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security;
+using System.Threading.Tasks;
 using System.Web;
 using ASP_FinanceCalculator_Server.Models;
+using Pluralize;
+using Pluralize.NET;
 
 namespace ASP_FinanceCalculator_Server.Repos
 {
-    /* public class RepositoryBase<TModel> : Repository<TModel> where TModel: ModelBase, new() 
+    public struct NadoMapperParameter
     {
-        
-    } */
+        public string Name { get; }
+        public object Value { get; }
+
+        public NadoMapperParameter(string name, object value)
+        {
+            Name = name;
+            Value = value;
+        }
+    }
+    public class RepositoryBase<TModel> where TModel : ModelBase
+    {
+        private Pluralizer _pluralizer;
+        private string _modelName => typeof(TModel).Name;
+        private string _modelNamePlural => _pluralizer.Pluralize(_modelName);
+
+        private DataContext<TModel> _dataContext = new DataContext<TModel>();
+
+        public bool VerifyInitialize()
+        {
+            _dataContext.LoadConnectionString("Data Source=localhost;Initial Catalog=TestDB;Integrated Security=True;");
+            _dataContext.VerifyInitialize();
+            _pluralizer = new Pluralizer();
+
+
+            return true;
+        }
+
+        public Task<IEnumerable<TModel>> GetAllAsync()
+        {
+            VerifyInitialize();
+
+            return _dataContext.ExecuteReaderAsync("Get" + _modelNamePlural);
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(NadoMapperParameter parameter)
+        {
+            VerifyInitialize();
+
+            return null;
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(string procName, NadoMapperParameter parameter)
+        {
+            VerifyInitialize();
+            return _dataContext.ExecuteReaderAsync(procName,parameter);
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            VerifyInitialize();
+            return null;
+        }
+
+        public Task<IEnumerable<TModel>> GetAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            VerifyInitialize();
+            return _dataContext.ExecuteReaderAsync(procName,parameters);
+        }
+
+        public Task<TModel> GetSingleAsync(IEnumerable<NadoMapperParameter> parameters)
+        {
+            VerifyInitialize();
+
+            return null;
+        }
+
+        public Task<TModel> GetSingleAsync(long id)
+        {
+            VerifyInitialize();
+            return _dataContext.ExecuteScalarAsync("Get"+_modelName+"ById");
+        }
+
+        public Task<TModel> GetSingleAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            VerifyInitialize();
+            return _dataContext.ExecuteScalarAsync(procName,parameters);
+        }
+
+        public Task<TModel> GetSingleAsync(NadoMapperParameter parameter)
+        {
+            VerifyInitialize();
+            return null;
+        }
+
+        public Task<TModel> GetSingleAsync(string procName, NadoMapperParameter parameter)
+        {
+            VerifyInitialize();
+            return _dataContext.ExecuteScalarAsync(procName,parameter);
+        }
+
+        public Task<TModel> AddAsync(TModel item, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            VerifyInitialize();
+            return _dataContext.ExecuteScalarAsync("Add" + _modelName, parameters);
+        }
+
+        public Task<TModel> AddUpdateAsync(TModel item)
+        {
+            VerifyInitialize();
+            return null;
+        }
+
+        public Task<long> UpdateAsync(TModel item)
+        {
+            VerifyInitialize();
+            return _dataContext.UpdateAsync(item);
+        }
+
+        public Task<long> DeleteAsync(TModel item)
+        {
+            VerifyInitialize();
+            return null;
+        }
+    }
 }

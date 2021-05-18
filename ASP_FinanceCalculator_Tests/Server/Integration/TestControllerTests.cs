@@ -1,6 +1,7 @@
 using ASP_FinanceCalculator_Server.Controllers;
 using System;
 using System.Linq;
+using ASP_FinanceCalculator_Server.Models;
 using Xunit;
 
 namespace ASP_FinanceCalculator_Tests
@@ -15,6 +16,7 @@ namespace ASP_FinanceCalculator_Tests
             //Add
 
             //Update
+            var updateTestRowsUpdated = await testController.UpdateAsync(new Test());
 
             //GetAll
             var tests = await testController.GetAllAsync();

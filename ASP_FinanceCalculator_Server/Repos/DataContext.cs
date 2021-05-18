@@ -21,9 +21,9 @@ namespace ASP_FinanceCalculator_Server.Repos
 
         public void LoadConnectionString(string connectionString) => _connectionString = connectionString;
 
-        private SqlCommand OpenConnection(string procName, List<NadoMapperParameter> parameters = null)
+        private SqlCommand OpenConnection(string command, IEnumerable<NadoMapperParameter> parameters = null)
         {
-            SqlCommand cmd = new SqlCommand(procName,_connection) { CommandType = CommandType.StoredProcedure };
+            SqlCommand cmd = new SqlCommand(command,_connection) { CommandType = CommandType.StoredProcedure };
 
             if (parameters != null)
             {
@@ -44,53 +44,68 @@ namespace ASP_FinanceCalculator_Server.Repos
             return true;
         }
 
-        //var models = new List<Code>();
-
-        // Dictionary<string,object> [dictionary]
-
-        //while (reader.Read())
-        //for(int i = 0; i < reader.VisibleFieldCount; ++i)
-        // [dictionary].Add(reader.GetName(i),reader.GetValue(i));
-
-        // PCMAPPER.Map([dictionary],new Code())
-
-        // _connection.Close();
-
-        // return models;
-
-        // == PCMAPPER ==
-        // [MODEL TYPE] mappedObject = JsonConvert.DeserializeObject<MODEL TYPE>(JsonConvert.SerializeObject(source))
-
-        // return mappedObject
-
         private TModel MapSingle(Dictionary<string, object> props) =>
             JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject(props));
 
-        public async Task<IEnumerable<TModel>> ExecuteReaderAsync()
+        private TModel MapSingle(object model) =>
+            JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject(model));
+
+        public async Task<long> UpdateAsync(TModel model)
         {
-            var cmd = OpenConnection("GetAll" + _modelNamePlural);
+            var props = model.GetType().GetProperties();
+
+            // use prop names + values to generate list of NadoMapperParameter
+            // pass params + "Update[modelName]" to ExecuteScalar + return result
+
+            return 1;
+        }
+
+        public async Task<IEnumerable<TModel>> ExecuteReaderAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            var cmd = OpenConnection(command,parameters);
+
             var data = await cmd.ExecuteReaderAsync();
 
             var models = new List<TModel>();
 
             while (data.Read())
             {
-                var objectProps = new Dictionary<string,object>();
+                var objectProps = new Dictionary<string, object>();
 
-                for(int i = 0; i < data.VisibleFieldCount; ++i)
-                    objectProps.Add(data.GetName(i),data.GetValue(i));
+                for (int i = 0; i < data.VisibleFieldCount; ++i)
+                    objectProps.Add(data.GetName(i), data.GetValue(i));
 
                 models.Add(MapSingle(objectProps));
             }
 
-            _connection.Close();
-
+            cmd.Connection.Close();
             return models;
         }
 
-        /* public async Task<TModel> ExecuteScalarAsync(string cmd, IEnumerable<NadoMapperParameter> parameters = null)
-        {
+        public async Task<IEnumerable<TModel>> ExecuteReaderAsync(string command, NadoMapperParameter parameter)
+            => await ExecuteReaderAsync(command, new List<NadoMapperParameter>() { parameter });
 
-        } */
+        public async Task<TModel> ExecuteScalarAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            var cmd = OpenConnection(command, parameters);
+
+            var data = await cmd.ExecuteScalarAsync();
+
+            cmd.Connection.Close();
+            return MapSingle(data);
+        }
+
+        public async Task<TModel> ExecuteScalarAsync(string command, NadoMapperParameter parameters)
+            => await ExecuteScalarAsync(command, new List<NadoMapperParameter>() {parameters});
+
+        public async Task<long> ExecuteNonQueryAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            var cmd = OpenConnection(command, parameters);
+
+            var rowsUpdated = await cmd.ExecuteNonQueryAsync();
+
+            cmd.Connection.Close();
+            return rowsUpdated;
+        }
     }
 }

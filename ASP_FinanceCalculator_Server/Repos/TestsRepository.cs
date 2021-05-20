@@ -6,7 +6,7 @@ using ASP_FinanceCalculator_Server.Models;
 
 namespace ASP_FinanceCalculator_Server.Repos
 {
-    public class TestsRepository : RepositoryBase<Test>
+    public class TestsRepositoryBase : RepositoryBase<Test>
     {
 
     }

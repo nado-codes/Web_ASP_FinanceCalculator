@@ -1,8 +1,9 @@
 create table Tests
 (
-	Id int primary key not null,
+	Id int primary key identity not null,
 	[Name] varchar(64) not null,
-	LastModified timestamp not null
+	LastModified timestamp not null,
+	DateAdded datetime not null default(getutcdate())
 )
 go
 create procedure GetTests

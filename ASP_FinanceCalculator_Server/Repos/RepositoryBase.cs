@@ -8,6 +8,7 @@ using System.Security;
 using System.Threading.Tasks;
 using System.Web;
 using ASP_FinanceCalculator_Server.Models;
+using ASP_FinanceCalculator_Server.Repos.Conventions;
 using Pluralize;
 using Pluralize.NET;
 
@@ -38,6 +39,10 @@ namespace ASP_FinanceCalculator_Server.Repos
             _dataContext.VerifyInitialize();
             _pluralizer = new Pluralizer();
 
+            _dataContext.PropertyConventions.Add(new IgnoreDateAddedDuringAddPropertyConvention());
+            _dataContext.PropertyConventions.Add(new IgnoreLastModifiedDuringAddPropertyConvention());
+            _dataContext.PropertyConventions.Add(new IgnoreDateAddedDuringUpdatePropertyConvention());
+            _dataContext.PropertyConventions.Add(new IgnoreLastModifiedDuringUpdatePropertyConvention());
 
             return true;
         }
@@ -84,13 +89,13 @@ namespace ASP_FinanceCalculator_Server.Repos
         public Task<TModel> GetSingleAsync(long id)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteScalarAsync("Get"+_modelName+"ById");
+            return _dataContext.ExecuteScalarAsync("Get"+_modelName+"ById", CRUDType.Read);
         }
 
         public Task<TModel> GetSingleAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteScalarAsync(procName,parameters);
+            return _dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameters);
         }
 
         public Task<TModel> GetSingleAsync(NadoMapperParameter parameter)
@@ -102,13 +107,13 @@ namespace ASP_FinanceCalculator_Server.Repos
         public Task<TModel> GetSingleAsync(string procName, NadoMapperParameter parameter)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteScalarAsync(procName,parameter);
+            return _dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameter);
         }
 
-        public Task<TModel> AddAsync(TModel item, IEnumerable<NadoMapperParameter> parameters = null)
+        public Task<TModel> AddAsync(TModel item)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteScalarAsync("Add" + _modelName, parameters);
+            return _dataContext.AddAsync(item);
         }
 
         public Task<TModel> AddUpdateAsync(TModel item)

@@ -14,7 +14,7 @@ using ASP_FinanceCalculator_Server.Repos;
 namespace ASP_FinanceCalculator_Server.Controllers
 {
     [RoutePrefix("api/tests")]
-    public class TestController : NadoAPIControllerBase<Test,TestsRepository>
+    public class TestController : NadoAPIControllerBase<Test,TestsRepositoryBase>
     {
         
     }

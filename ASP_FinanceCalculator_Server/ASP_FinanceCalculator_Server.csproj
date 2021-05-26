@@ -196,6 +196,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
+    <Compile Include="Repos\Conventions\IgnoreIdDuringAddPropertyConvention.cs" />
     <Compile Include="Repos\Conventions\PropertyConventionBase.cs" />
     <Compile Include="Repos\Conventions\IgnoreDateAddedDuringAddPropertyConvention.cs" />
     <Compile Include="Repos\Conventions\IgnoreDateAddedDuringUpdatePropertyConvention.cs" />

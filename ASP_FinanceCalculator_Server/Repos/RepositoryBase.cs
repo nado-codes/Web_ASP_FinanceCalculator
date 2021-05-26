@@ -14,17 +14,7 @@ using Pluralize.NET;
 
 namespace ASP_FinanceCalculator_Server.Repos
 {
-    public struct NadoMapperParameter
-    {
-        public string Name { get; }
-        public object Value { get; }
-
-        public NadoMapperParameter(string name, object value)
-        {
-            Name = name;
-            Value = value;
-        }
-    }
+    
     public class RepositoryBase<TModel> where TModel : ModelBase
     {
         private Pluralizer _pluralizer;
@@ -43,6 +33,7 @@ namespace ASP_FinanceCalculator_Server.Repos
             _dataContext.PropertyConventions.Add(new IgnoreLastModifiedDuringAddPropertyConvention());
             _dataContext.PropertyConventions.Add(new IgnoreDateAddedDuringUpdatePropertyConvention());
             _dataContext.PropertyConventions.Add(new IgnoreLastModifiedDuringUpdatePropertyConvention());
+            _dataContext.PropertyConventions.Add(new IgnoreIdDuringAddPropertyConvention());
 
             return true;
         }
@@ -86,16 +77,18 @@ namespace ASP_FinanceCalculator_Server.Repos
             return null;
         }
 
+        // TODO: Update when DataContext has built-in methods for GetSingleAsync, returning "Task"
         public Task<TModel> GetSingleAsync(long id)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteScalarAsync("Get"+_modelName+"ById", CRUDType.Read);
+            return null; //_dataContext.ExecuteScalarAsync("Get"+_modelName+"ById", CRUDType.Read, new NadoMapperParameter{Name="id", Value=id});
         }
 
+        // TODO: Update when DataContext has built-in methods for GetSingleAsync, returning "Task"
         public Task<TModel> GetSingleAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameters);
+            return null; //_dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameters);
         }
 
         public Task<TModel> GetSingleAsync(NadoMapperParameter parameter)
@@ -104,16 +97,24 @@ namespace ASP_FinanceCalculator_Server.Repos
             return null;
         }
 
+        // TODO: Update when DataContext has built-in methods for GetSingleAsync, returning "Task"
         public Task<TModel> GetSingleAsync(string procName, NadoMapperParameter parameter)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameter);
+
+            // var model = 
+
+            return null; //_dataContext.MapSingle(_dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameter));
         }
 
-        public Task<TModel> AddAsync(TModel item)
+        public async Task<TModel> AddAsync(TModel item)
         {
             VerifyInitialize();
-            return _dataContext.AddAsync(item);
+
+            var id = await _dataContext.ExecuteScalarAsync("Add" + _modelName, CRUDType.Create,
+                _dataContext.GetParamsFromModel(item));
+
+            return null;
         }
 
         public Task<TModel> AddUpdateAsync(TModel item)

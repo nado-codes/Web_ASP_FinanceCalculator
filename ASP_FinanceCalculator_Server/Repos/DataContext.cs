@@ -26,36 +26,17 @@ namespace ASP_FinanceCalculator_Server.Repos
         public object Value { get; set; }
     }
 
-    public class DataContext<TModel>
+    public class DataContext<TEntity>
     {
         private SqlConnection _connection;
         private string _connectionString;
         public List<PropertyConventionBase> PropertyConventions;
 
         private Pluralizer _pluralizer;
-        private string _modelName => typeof(TModel).Name;
+        private string _modelName => typeof(TEntity).Name;
         private string _modelNamePlural => _pluralizer.Pluralize(_modelName);
 
         public void LoadConnectionString(string connectionString) => _connectionString = connectionString;
-
-        private SqlCommand OpenConnection(string command, CRUDType crudType, IEnumerable<NadoMapperParameter> parameters = null)
-        {
-            SqlCommand cmd = new SqlCommand(command,_connection) { CommandType = CommandType.StoredProcedure };
-
-            if (parameters != null)
-            {
-                foreach (NadoMapperParameter parameter in parameters)
-                {
-                    if(!PropertyConventions.Any(x => x.PropertyName == parameter.Name && x.CRUDType == crudType))
-                        cmd.Parameters.Add(new SqlParameter(parameter.Name, parameter.Value));
-                }
-                    
-            }
-
-            cmd.Connection.Open();
-
-            return cmd;
-        }
 
         public bool VerifyInitialize()
         {
@@ -66,43 +47,89 @@ namespace ASP_FinanceCalculator_Server.Repos
             return true;
         }
 
-        public TModel MapSingle(Dictionary<string, object> props) =>
-            JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject(props));
-
-        public TModel MapSingle(object model) =>
-            JsonConvert.DeserializeObject<TModel>(JsonConvert.SerializeObject(model));
-
-        public IEnumerable<NadoMapperParameter> GetParamsFromModel(TModel model)
+        protected IEnumerable<NadoMapperParameter> GetParamsFromModel(TEntity model)
         {
             var parameters = new List<NadoMapperParameter>();
             foreach (PropertyInfo prop in model.GetType().GetProperties())
-                parameters.Add(new NadoMapperParameter(){Name= prop.Name, Value=prop.GetValue(model)});
+                parameters.Add(new NadoMapperParameter() { Name = prop.Name, Value = prop.GetValue(model) });
 
             return parameters;
         }
 
-        // TODO: How to map a returned object while returning a task? Make MapSingle return a task sometimes?
-        /* public Task<TModel> GetSingleAsync(IEnumerable<NadoMapperParameter> parameters)
-            => MapSingle(ExecuteScalarAsync("Get" + _modelName + "ById", CRUDType.Read,
-                parameters)); */
+        public TEntity MapSingle(Dictionary<string, object> props) =>
+            JsonConvert.DeserializeObject<TEntity>(JsonConvert.SerializeObject(props));
 
-        public async Task<TModel> AddAsync(TModel model)
+        public TEntity MapSingle(object model) =>
+            JsonConvert.DeserializeObject<TEntity>(JsonConvert.SerializeObject(model));
+
+        private SqlCommand OpenConnection(string command, CRUDType crudType, NadoMapperParameter parameter)
+            => OpenConnection(command, crudType, CommandType.StoredProcedure, new List<NadoMapperParameter>() { parameter });
+
+        private SqlCommand OpenConnection(string command, CRUDType crudType, CommandType commandType, IEnumerable<NadoMapperParameter> parameters = null)
         {
-            var id = await ExecuteScalarAsync("Add" + _modelName, CRUDType.Create, GetParamsFromModel(model));
+            SqlCommand cmd = new SqlCommand(command,_connection) { CommandType = commandType };
 
-            return MapSingle(await ExecuteScalarAsync("Get" + _modelName + "ById", CRUDType.Read,
-                new NadoMapperParameter() {Name = "id", Value = id}));
+            if (parameters != null)
+            {
+                foreach (NadoMapperParameter parameter in parameters)
+                {
+                    if(!PropertyConventions.Any(x => x.PropertyName == parameter.Name && x.CRUDType == crudType))
+                        cmd.Parameters.Add(new SqlParameter(parameter.Name, parameter.Value));
+                }   
+            }
+
+            cmd.Connection.Open();
+
+            return cmd;
         }
 
-        public async Task<long> UpdateAsync(TModel model) => await ExecuteNonQueryAsync("Update" + _modelName, CRUDType.Update, GetParamsFromModel(model));
+       
 
-        public async Task<IEnumerable<TModel>> ExecuteReaderAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
+        
+
+        
+
+        
+
+        /* public Task<TModel> GetSingleAsync(long id)
         {
-            var cmd = OpenConnection(command,CRUDType.Read,parameters);
+            var cmd = OpenConnection("Add" + _modelName, CRUDType.Read);
 
-            var data = await cmd.ExecuteReaderAsync();
+            var data = Task.Run(cmd.ExecuteScalar());
 
-            var models = new List<TModel>();
+            return MapSingle(data);
+        } */
+
+        public Task<TEntity> AddAsync(TEntity model)
+        {
+            var cmd = OpenConnection("Add" + _modelName, CRUDType.Create, CommandType.StoredProcedure,GetParamsFromModel(model));
+            var id = cmd.ExecuteScalar();
+
+            cmd = OpenConnection($"SELECT * from {_modelNamePlural} where Id={id}", CRUDType.Read, CommandType.Text);
+            //cmd.Connection.Open();
+            var data = cmd.ExecuteReader();
+           cmd.Connection.Close();
+
+            data.Read();
+
+            var objectProps = new Dictionary<string, object>();
+
+            for (int i = 0; i < data.VisibleFieldCount; ++i)
+                objectProps.Add(data.GetName(i), data.GetValue(i));
+
+            return Task.FromResult(MapSingle(objectProps));
+        }
+
+        public async Task<long> UpdateAsync(TEntity model) => await ExecuteNonQueryAsync("Update" + _modelName, CRUDType.Update, GetParamsFromModel(model));
+
+
+        public Task<IEnumerable<TEntity>> ExecuteReaderAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            var cmd = OpenConnection(command,CRUDType.Read,CommandType.StoredProcedure,parameters);
+
+            var data = cmd.ExecuteReader();
+
+            var models = new List<TEntity>();
 
             while (data.Read())
             {
@@ -115,15 +142,15 @@ namespace ASP_FinanceCalculator_Server.Repos
             }
 
             cmd.Connection.Close();
-            return models;
+            return Task.FromResult<IEnumerable<TEntity>>(models);
         }
 
-        public async Task<IEnumerable<TModel>> ExecuteReaderAsync(string command, NadoMapperParameter parameter)
+        public async Task<IEnumerable<TEntity>> ExecuteReaderAsync(string command, NadoMapperParameter parameter)
             => await ExecuteReaderAsync(command, new List<NadoMapperParameter>() { parameter });
 
         public async Task<object> ExecuteScalarAsync(string command, CRUDType crudType, IEnumerable<NadoMapperParameter> parameters = null)
         {
-            var cmd = OpenConnection(command, crudType, parameters);
+            var cmd = OpenConnection(command, crudType, CommandType.StoredProcedure, parameters);
 
             var data = await cmd.ExecuteScalarAsync();
 
@@ -136,7 +163,7 @@ namespace ASP_FinanceCalculator_Server.Repos
 
         public async Task<long> ExecuteNonQueryAsync(string command, CRUDType crudType, IEnumerable<NadoMapperParameter> parameters = null)
         {
-            var cmd = OpenConnection(command, crudType, parameters);
+            var cmd = OpenConnection(command, crudType, CommandType.StoredProcedure, parameters);
 
             var rowsUpdated = await cmd.ExecuteNonQueryAsync();
 

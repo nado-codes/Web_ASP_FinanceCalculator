@@ -102,20 +102,26 @@ namespace ASP_FinanceCalculator_Server.Repos
         {
             VerifyInitialize();
 
-            // var model = 
+            //var model =  TODO: How to handle mapping within tasks C#?
 
             return null; //_dataContext.MapSingle(_dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameter));
         }
 
-        public async Task<TModel> AddAsync(TModel item)
+        public Task<TModel> AddAsync(TModel item)
         {
+            VerifyInitialize();
+
+            return _dataContext.AddAsync(item);
+        }
+
+        /*{
             VerifyInitialize();
 
             var id = await _dataContext.ExecuteScalarAsync("Add" + _modelName, CRUDType.Create,
                 _dataContext.GetParamsFromModel(item));
 
             return null;
-        }
+        }*/
 
         public Task<TModel> AddUpdateAsync(TModel item)
         {

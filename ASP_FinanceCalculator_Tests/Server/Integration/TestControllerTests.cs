@@ -4,7 +4,7 @@ using System.Linq;
 using ASP_FinanceCalculator_Server.Models;
 using Xunit;
 
-namespace ASP_FinanceCalculator_Tests
+namespace ASP_FinanceCalculator_Tests.Server
 {
     public class TestControllerTests
     {

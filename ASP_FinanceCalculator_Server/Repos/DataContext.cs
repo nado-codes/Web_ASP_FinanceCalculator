@@ -100,16 +100,23 @@ namespace ASP_FinanceCalculator_Server.Repos
             return MapSingle(data);
         } */
 
+        //TODO: How to map with tasks?
+        public Task<TEntity> MapWithTask(Task obj)
+        {
+            //return obj.R
+            return null;
+        }
         public Task<TEntity> AddAsync(TEntity model)
         {
             var cmd = OpenConnection("Add" + _modelName, CRUDType.Create, CommandType.StoredProcedure,GetParamsFromModel(model));
-            var id = cmd.ExecuteScalar();
+            var id = Task.WhenAll(cmd.ExecuteScalarAsync());
+            cmd.Connection.Close();
+
+            //yield 
 
             cmd = OpenConnection($"SELECT * from {_modelNamePlural} where Id={id}", CRUDType.Read, CommandType.Text);
-            //cmd.Connection.Open();
-            var data = cmd.ExecuteReader();
-           cmd.Connection.Close();
-
+            var data = (cmd.ExecuteReaderAsync()).Result;
+            
             data.Read();
 
             var objectProps = new Dictionary<string, object>();
@@ -117,11 +124,12 @@ namespace ASP_FinanceCalculator_Server.Repos
             for (int i = 0; i < data.VisibleFieldCount; ++i)
                 objectProps.Add(data.GetName(i), data.GetValue(i));
 
+            cmd.Connection.Close();
+
             return Task.FromResult(MapSingle(objectProps));
         }
 
         public async Task<long> UpdateAsync(TEntity model) => await ExecuteNonQueryAsync("Update" + _modelName, CRUDType.Update, GetParamsFromModel(model));
-
 
         public Task<IEnumerable<TEntity>> ExecuteReaderAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
         {

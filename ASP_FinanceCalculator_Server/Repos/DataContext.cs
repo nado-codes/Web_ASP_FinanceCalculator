@@ -109,20 +109,26 @@ namespace ASP_FinanceCalculator_Server.Repos
         public Task<TEntity> AddAsync(TEntity model)
         {
             var cmd = OpenConnection("Add" + _modelName, CRUDType.Create, CommandType.StoredProcedure,GetParamsFromModel(model));
-            var id = Task.WhenAll(cmd.ExecuteScalarAsync());
+            var id = cmd.ExecuteScalarAsync();
             cmd.Connection.Close();
 
             //yield 
 
-            cmd = OpenConnection($"SELECT * from {_modelNamePlural} where Id={id}", CRUDType.Read, CommandType.Text);
-            var data = (cmd.ExecuteReaderAsync()).Result;
+            cmd = OpenConnection($"SELECT * from {_modelNamePlural} where Id={id.Result}", CRUDType.Read, CommandType.Text);
+            var data = cmd.ExecuteReaderAsync();
             
-            data.Read();
+            //data.Read();
 
             var objectProps = new Dictionary<string, object>();
 
-            for (int i = 0; i < data.VisibleFieldCount; ++i)
-                objectProps.Add(data.GetName(i), data.GetValue(i));
+            /*for (int i = 0; i < data.VisibleFieldCount; ++i)
+                objectProps.Add(data.GetName(i), data.GetValue(i));*/
+
+            /*
+                declare @test table(Id int)
+                insert into @test exec AddTest @name='mytest'
+                select * from Tests where Id=(select top(1)* from @test)
+            */
 
             cmd.Connection.Close();
 

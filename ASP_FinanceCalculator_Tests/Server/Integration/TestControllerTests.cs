@@ -29,22 +29,22 @@ namespace ASP_FinanceCalculator_Tests.Server
 
             addTest.Name = updateTestName;
 
-            var updateTestRowsUpdated = await testController.UpdateAsync(new Test());
+            var updateTestRowsUpdated = await testController.UpdateAsync(addTest);
             Assert.True(updateTestRowsUpdated == 1);
 
             //GetById
-            var updateTest = await testController.GetByIdAsync(addTest.Id);
-            Assert.True(updateTest.Name == updateTestName);
+            var updatedTest = await testController.GetByIdAsync(addTest.Id);
+            Assert.True(updatedTest.Name == updateTestName);
 
             //GetAll
             var tests = await testController.GetAllAsync();
             Assert.True(tests.Count() > 0);
 
             //Delete
-            var deleteTestRowsUpdated = await testController.DeleteAsync(updateTest);
-            var deleteTest = await testController.GetByIdAsync(updateTest.Id);
+            var deleteTestRowsUpdated = await testController.DeleteAsync(updatedTest);
+            var deletedTest = await testController.GetByIdAsync(updatedTest.Id);
 
-            Assert.True(deleteTest == null);
+            Assert.True(deletedTest == null);
         }
     }
 }

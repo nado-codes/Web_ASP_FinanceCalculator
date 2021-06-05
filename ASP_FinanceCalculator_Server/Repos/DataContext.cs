@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
+using ASP_FinanceCalculator_Server.Models;
 using ASP_FinanceCalculator_Server.Repos.Conventions;
 using Newtonsoft.Json;
 using Pluralize.NET;
@@ -26,7 +27,7 @@ namespace ASP_FinanceCalculator_Server.Repos
         public object Value { get; set; }
     }
 
-    public class DataContext<TEntity>
+    public class DataContext<TEntity> where TEntity: ModelBase
     {
         private SqlConnection _connection;
         private string _connectionString;
@@ -83,65 +84,75 @@ namespace ASP_FinanceCalculator_Server.Repos
             return cmd;
         }
 
-       
+        public async Task<IEnumerable<TEntity>> GetAllAsync() => await ExecuteReaderAsync($"Get{_modelNamePlural}");
 
-        
-
-        
-
-        
-
-        /* public Task<TModel> GetSingleAsync(long id)
+        public async Task<TEntity> GetSingleAsync(NadoMapperParameter parameter)
         {
-            var cmd = OpenConnection("Add" + _modelName, CRUDType.Read);
+            var parameterName = parameter.Name[0] + parameter.Name.Substring(1);
+            var cmd = OpenConnection($"Get{_modelName}By{parameterName}", CRUDType.Read, parameter);
 
-            var data = Task.Run(cmd.ExecuteScalar());
+            var data = await cmd.ExecuteScalarAsync();
 
             return MapSingle(data);
-        } */
-
-        //TODO: How to map with tasks?
-        public Task<TEntity> MapWithTask(Task obj)
-        {
-            //return obj.R
-            return null;
         }
-        public Task<TEntity> AddAsync(TEntity model)
+
+        public async Task<TEntity> GetSingleAsync(long id) =>
+            (await ExecuteReaderAsync($"Get{_modelName}ById", new NadoMapperParameter() {Name = "id", Value = id}))
+            .FirstOrDefault();
+
+        public async Task<TEntity> GetSingleByNameAsync(string name)
         {
-            var cmd = OpenConnection("Add" + _modelName, CRUDType.Create, CommandType.StoredProcedure,GetParamsFromModel(model));
-            var id = cmd.ExecuteScalarAsync();
+            var cmd = OpenConnection($"Get{_modelName}ByName", CRUDType.Read, new NadoMapperParameter() { Name = "name", Value = name });
+
+            var data = await cmd.ExecuteScalarAsync();
+
+            return MapSingle(data);
+        }
+
+        public async Task<TEntity> GetSingleAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
+        {
+            var cmd = OpenConnection(procName, CRUDType.Read, CommandType.StoredProcedure, parameters);
+
+            var data = await cmd.ExecuteScalarAsync();
+
+            return MapSingle(data);
+        }
+
+        public async Task<TEntity> AddAsync(TEntity model)
+        {
+            var cmd = OpenConnection($"Add{_modelName}", CRUDType.Create, CommandType.StoredProcedure,GetParamsFromModel(model));
+            var id = await cmd.ExecuteScalarAsync();
             cmd.Connection.Close();
 
-            //yield 
-
-            cmd = OpenConnection($"SELECT * from {_modelNamePlural} where Id={id.Result}", CRUDType.Read, CommandType.Text);
-            var data = cmd.ExecuteReaderAsync();
+            cmd = OpenConnection($"SELECT * from {_modelNamePlural} where Id={id}", CRUDType.Read, CommandType.Text);
+            var data = await cmd.ExecuteReaderAsync();
             
-            //data.Read();
+            data.Read();
 
             var objectProps = new Dictionary<string, object>();
 
-            /*for (int i = 0; i < data.VisibleFieldCount; ++i)
-                objectProps.Add(data.GetName(i), data.GetValue(i));*/
-
-            /*
-                declare @test table(Id int)
-                insert into @test exec AddTest @name='mytest'
-                select * from Tests where Id=(select top(1)* from @test)
-            */
+            for (int i = 0; i < data.VisibleFieldCount; ++i)
+                objectProps.Add(data.GetName(i), data.GetValue(i));
 
             cmd.Connection.Close();
 
-            return Task.FromResult(MapSingle(objectProps));
+            return MapSingle(objectProps);
         }
 
-        public async Task<long> UpdateAsync(TEntity model) => await ExecuteNonQueryAsync("Update" + _modelName, CRUDType.Update, GetParamsFromModel(model));
+        public async Task<long> UpdateAsync(TEntity model) => await ExecuteNonQueryAsync($"Update{_modelName}", CRUDType.Update, GetParamsFromModel(model));
 
-        public Task<IEnumerable<TEntity>> ExecuteReaderAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
+        public async Task<long> DeleteAsync(TEntity model) 
+            => await ExecuteNonQueryAsync($"Delete{_modelName}", CRUDType.Update, new List<NadoMapperParameter>()
+            {
+                new NadoMapperParameter(){Name="id",Value=model.Id},
+                new NadoMapperParameter(){Name="lastModified",Value=model.LastModified}
+            });
+
+        public async Task<IEnumerable<TEntity>> ExecuteReaderAsync(string command, IEnumerable<NadoMapperParameter> parameters = null)
         {
             var cmd = OpenConnection(command,CRUDType.Read,CommandType.StoredProcedure,parameters);
 
-            var data = cmd.ExecuteReader();
+            var data = await cmd.ExecuteReaderAsync();
 
             var models = new List<TEntity>();
 
@@ -156,7 +167,7 @@ namespace ASP_FinanceCalculator_Server.Repos
             }
 
             cmd.Connection.Close();
-            return Task.FromResult<IEnumerable<TEntity>>(models);
+            return models;
         }
 
         public async Task<IEnumerable<TEntity>> ExecuteReaderAsync(string command, NadoMapperParameter parameter)
@@ -169,11 +180,11 @@ namespace ASP_FinanceCalculator_Server.Repos
             var data = await cmd.ExecuteScalarAsync();
 
             cmd.Connection.Close();
-            return MapSingle(data);
+            return data;
         }
 
-        public async Task<object> ExecuteScalarAsync(string command, CRUDType crudType, NadoMapperParameter parameters)
-            => await ExecuteScalarAsync(command, crudType, new List<NadoMapperParameter>() {parameters});
+        public async Task<object> ExecuteScalarAsync(string command, CRUDType crudType, NadoMapperParameter parameter)
+            => await ExecuteScalarAsync(command, crudType, new List<NadoMapperParameter>() {parameter});
 
         public async Task<long> ExecuteNonQueryAsync(string command, CRUDType crudType, IEnumerable<NadoMapperParameter> parameters = null)
         {

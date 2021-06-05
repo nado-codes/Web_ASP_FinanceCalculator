@@ -15,13 +15,13 @@ using Pluralize.NET;
 namespace ASP_FinanceCalculator_Server.Repos
 {
     
-    public class RepositoryBase<TModel> where TModel : ModelBase
+    public class RepositoryBase<TEntity> where TEntity : ModelBase
     {
         private Pluralizer _pluralizer;
-        private string _modelName => typeof(TModel).Name;
+        private string _modelName => typeof(TEntity).Name;
         private string _modelNamePlural => _pluralizer.Pluralize(_modelName);
 
-        private DataContext<TModel> _dataContext = new DataContext<TModel>();
+        private DataContext<TEntity> _dataContext = new DataContext<TEntity>();
 
         public bool VerifyInitialize()
         {
@@ -32,73 +32,40 @@ namespace ASP_FinanceCalculator_Server.Repos
             _dataContext.PropertyConventions.Add(new IgnoreDateAddedDuringAddPropertyConvention());
             _dataContext.PropertyConventions.Add(new IgnoreLastModifiedDuringAddPropertyConvention());
             _dataContext.PropertyConventions.Add(new IgnoreDateAddedDuringUpdatePropertyConvention());
-            _dataContext.PropertyConventions.Add(new IgnoreLastModifiedDuringUpdatePropertyConvention());
             _dataContext.PropertyConventions.Add(new IgnoreIdDuringAddPropertyConvention());
 
             return true;
         }
 
-        public Task<IEnumerable<TModel>> GetAllAsync()
+        public Task<IEnumerable<TEntity>> GetAllAsync()
         {
             VerifyInitialize();
 
-            return _dataContext.ExecuteReaderAsync("Get" + _modelNamePlural);
+            return _dataContext.GetAllAsync();
         }
 
-        public Task<IEnumerable<TModel>> GetAsync(NadoMapperParameter parameter)
+        // TODO: Keep private until testable
+        private Task<TEntity> GetSingleAsync(NadoMapperParameter parameter)
         {
             VerifyInitialize();
-
-            return null;
+            return _dataContext.GetSingleAsync(parameter);
         }
 
-        public Task<IEnumerable<TModel>> GetAsync(string procName, NadoMapperParameter parameter)
+        public Task<TEntity> GetSingleAsync(long id)
         {
             VerifyInitialize();
-            return _dataContext.ExecuteReaderAsync(procName,parameter);
+            return _dataContext.GetSingleAsync(id);
         }
 
-        public Task<IEnumerable<TModel>> GetAsync(IEnumerable<NadoMapperParameter> parameters = null)
+        // TODO: Keep private until testable
+        private Task<TEntity> GetSingleAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
         {
             VerifyInitialize();
-            return null;
+            return _dataContext.GetSingleAsync(procName, parameters);
         }
 
-        public Task<IEnumerable<TModel>> GetAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
-        {
-            VerifyInitialize();
-            return _dataContext.ExecuteReaderAsync(procName,parameters);
-        }
-
-        public Task<TModel> GetSingleAsync(IEnumerable<NadoMapperParameter> parameters)
-        {
-            VerifyInitialize();
-
-            return null;
-        }
-
-        // TODO: Update when DataContext has built-in methods for GetSingleAsync, returning "Task"
-        public Task<TModel> GetSingleAsync(long id)
-        {
-            VerifyInitialize();
-            return null; //_dataContext.ExecuteScalarAsync("Get"+_modelName+"ById", CRUDType.Read, new NadoMapperParameter{Name="id", Value=id});
-        }
-
-        // TODO: Update when DataContext has built-in methods for GetSingleAsync, returning "Task"
-        public Task<TModel> GetSingleAsync(string procName, IEnumerable<NadoMapperParameter> parameters = null)
-        {
-            VerifyInitialize();
-            return null; //_dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameters);
-        }
-
-        public Task<TModel> GetSingleAsync(NadoMapperParameter parameter)
-        {
-            VerifyInitialize();
-            return null;
-        }
-
-        // TODO: Update when DataContext has built-in methods for GetSingleAsync, returning "Task"
-        public Task<TModel> GetSingleAsync(string procName, NadoMapperParameter parameter)
+        // TODO: Keep private until testable
+        private Task<TEntity> GetSingleAsync(string procName, NadoMapperParameter parameter)
         {
             VerifyInitialize();
 
@@ -107,7 +74,7 @@ namespace ASP_FinanceCalculator_Server.Repos
             return null; //_dataContext.MapSingle(_dataContext.ExecuteScalarAsync(procName,CRUDType.Read, parameter));
         }
 
-        public Task<TModel> AddAsync(TModel item)
+        public Task<TEntity> AddAsync(TEntity item)
         {
             VerifyInitialize();
 
@@ -123,22 +90,22 @@ namespace ASP_FinanceCalculator_Server.Repos
             return null;
         }*/
 
-        public Task<TModel> AddUpdateAsync(TModel item)
+        public Task<TEntity> AddUpdateAsync(TEntity item)
         {
             VerifyInitialize();
             return null;
         }
 
-        public Task<long> UpdateAsync(TModel item)
+        public Task<long> UpdateAsync(TEntity item)
         {
             VerifyInitialize();
             return _dataContext.UpdateAsync(item);
         }
 
-        public Task<long> DeleteAsync(TModel item)
+        public Task<long> DeleteAsync(TEntity item)
         {
             VerifyInitialize();
-            return null;
+            return _dataContext.DeleteAsync(item);
         }
     }
 }
